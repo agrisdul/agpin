@@ -1,0 +1,251 @@
+#config_version=5
+
+#CobraPin Example Config
+
+hardware:
+  platform: opp
+  driverboards: gen2
+
+
+opp:
+  #Use the USB ports defined by your OS for the two STM32 boards
+  ports: COM3, COM6
+  #USING SERIAL NUMBERS INSTEAD OF CHAINS
+  #  Board 0 has serial number 0, Board 1 has serial number 1.
+  #  This is convenient if your OS tends to reassign the serial port.
+  #  MPF will automatically address the correct board even if the ports
+  #     are swapped.
+
+  #For multiple CobraPin boards in a game, you will either have to give
+  #  the STM32 boards on the second CobraPin board new serial numbers
+  #  (10 and 11 are suggested for the 2nd board since 2 is used by the
+  #  CobraPin Xpansion Board)
+  #  <OR> Use the chains section to assign a port to a board number.
+  #  Mixing these up could cause blown FETs, coils, and fuses. Proceed
+  #  with caution. Test without coil power and use the yellow coil LEDs
+  #  for feedback.
+  #chains:
+     #0: /dev/ttyACM0
+     #1: /dev/ttyACM1
+
+
+psus:
+  default:
+    #Gives the capacitors extra time to recharge after firing a coil
+    #  and eases the load on the power supply. Doesn't affect autofire
+    #  devices like flippers, pops, slings.
+    release_wait_ms: 50
+
+
+#One giant config file can get difficult to manage. You can put any of
+#  these config sections in its own yaml file and link to it with the
+#  config section here
+config:
+  #- switches_config.yaml
+  #- lights_config.yaml
+  #- coils_config.yaml
+  # ...
+
+
+switches:
+
+  #DIRECT SWITCHES
+  #switch numbers are labelled in silkscreen on the board
+  s_left_flipper:
+    number: 3-0-27
+    tags: left_flipper
+  s_right_flipper:
+    number: 3-0-26
+    tags: right_flipper
+  s_p2left_flipper:
+    number: 3-0-24
+    tags: left_flipper
+  s_p2right_flipper:
+    number: 3-0-25
+    tags: right_flipper
+  s_startButton:
+    number: 1-0-1
+    tags: start
+  s_drop_front:
+    number: 3-0-19
+  s_drop_middle:
+    number: 3-0-18
+  s_drop_back:
+    number: 3-0-17
+  s_drop_front1:
+    number: 3-0-2
+  s_drop_middle1:
+    number: 3-0-3
+  s_drop_back1:
+    number: 3-0-8
+  s_drain:
+    number: 3-0-16
+  s_sling_left:
+    number: 3-0-1
+  s_target1:
+    number: 1-0-11
+    debounce: quick
+    ignore_window_ms: 1000ms
+  s_target2:
+    number: 1-0-10
+    debounce: quick
+    ignore_window_ms: 1000ms
+  s_target3:
+    number: 1-0-9
+    debounce: quick
+    ignore_window_ms: 1000ms
+  s_target4:
+    number: 1-0-8
+    debounce: quick
+    ignore_window_ms: 1000ms
+  s_target5:
+    number: 1-0-3
+    debounce: quick
+    ignore_window_ms: 1000ms
+  s_target6:
+    number: 1-0-2
+    debounce: quick
+    ignore_window_ms: 1000ms
+
+
+coils:
+  #coil numbers are labelled in silkscreen on the board
+
+  #There are multiple ways to configure flippers, use the one that
+  #  matches your hardware
+  c_flipper_left:
+    number: 3-0-1
+    default_hold_power: 0.125
+    default_pulse_ms: 20
+    allow_enable: true
+  c_flipper_right:
+    number: 3-0-2
+    default_hold_power: 0.125
+    default_pulse_ms: 20
+    allow_enable: true
+  c_p2flipper_left:
+    number: 3-0-3
+    default_hold_power: 0.125
+    default_pulse_ms: 20
+    allow_enable: true
+  c_p2flipper_right:
+    number: 3-0-4
+    default_hold_power: 0.125
+    default_pulse_ms: 20
+    allow_enable: true
+  c_p2flipper_centre:
+    number: 3-0-5
+    default_hold_power: 0.125
+    default_pulse_ms: 20
+    allow_enable: true
+  c_flipper_centre:
+    number: 3-0-6
+    default_hold_power: 0.125
+    default_pulse_ms: 20
+    allow_enable: true
+  c_left_plunger:
+    number: 1-0-2
+    default_pulse_ms: 10
+  c_drop_reset:
+    number: 3-0-0
+    default_pulse_ms: 10
+  c_drain_eject:
+    number: 3-0-7
+    default_pulse_ms: 20
+  #c_sling_left:
+    #number: 3-0-15
+    #default_pulse_ms: 15
+
+
+flippers:
+  left_flipper:
+    main_coil: c_flipper_left
+    activation_switch: s_left_flipper
+    enable_events: machine_reset_phase_3
+  right_flipper:
+    main_coil: c_flipper_right
+    activation_switch: s_right_flipper
+    enable_events: machine_reset_phase_3
+  p2left_flipper:
+    main_coil: c_p2flipper_left
+    activation_switch: s_p2left_flipper
+    enable_events: machine_reset_phase_3
+  p2right_flipper:
+    main_coil: c_p2flipper_right
+    activation_switch: s_p2right_flipper
+    enable_events: machine_reset_phase_3
+  right_flipper_centre:
+    main_coil: c_flipper_centre
+    activation_switch: s_right_flipper
+    enable_events: machine_reset_phase_3
+  p2right_flipper_centre:
+    main_coil: c_p2flipper_centre
+    activation_switch: s_p2right_flipper
+    enable_events: machine_reset_phase_3
+  
+
+drop_targets:
+  front:
+    switch: s_drop_front
+  middle:
+    switch: s_drop_middle
+  back:
+    switch: s_drop_back
+drop_target_banks:
+  vuk_bank:
+    drop_targets: front, middle, back
+    reset_coils: c_drop_reset
+    reset_on_complete: 1s
+
+autofire_coils:
+  #Add your autofire cofigs for pops, slings, etc.
+  #ac_slingshot_left:
+    #coil: c_sling_left
+    #switch: s_sling_left
+
+
+ball_devices:
+  #Add your ball devices
+  bd_drain:
+    ball_switches: s_drain
+    eject_coil: c_drain_eject
+    tags: drain, home, trough
+    eject_timeouts: 3s
+
+playfields:
+  #Define your playfields
+  playfield:
+        default_source_device: bd_drain
+        tags: default
+
+
+machine:
+  balls_installed: 2 #How many balls are physically in your game
+  min_balls: 1 #How few balls can be accounted for before you can start a game
+
+
+game:
+  balls_per_game: 4
+  max_players: 2
+
+
+modes:
+  #Add all your mode names here
+  #- attract
+  - base
+  #- etc
+
+
+keyboard:   #use to drive your game from the computer for testing
+  z:
+    switch: s_left_flipper
+  "/":
+    switch: s_right_flipper
+  x:
+    switch: s_p2left_flipper
+  m:
+    switch: s_p2right_flipper
+  s: 
+    switch: s_startButton
+  p: 
+    switch: s_left_plunger_lane
